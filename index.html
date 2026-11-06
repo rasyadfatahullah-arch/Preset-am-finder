@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AM Finder — Jiyyad Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --card: #222222;
+      --border: #000000;
+      --accent: #ff3e00;
+      --accent-2: #00ff9d;
+      --accent-3: #ffd600;
+      --accent-4: #00c2ff;
+      --text: #f5f5f5;
+      --muted: #a0a0a0;
+      --shadow: 6px 6px 0 #000;
+      --shadow-sm: 3px 3px 0 #000;
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated grid background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 62, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 62, 0, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+
+    /* Floating shapes */
+    .shape {
+      position: fixed;
+      border: 3px solid #000;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+    .shape-1 {
+      width: 120px; height: 120px;
+      background: var(--accent);
+      top: 10%; left: 5%;
+      animation: float1 8s ease-in-out infinite;
+    }
+    .shape-2 {
+      width: 80px; height: 80px;
+      background: var(--accent-2);
+      border-radius: 50%;
+      top: 60%; right: 8%;
+      animation: float2 10s ease-in-out infinite;
+    }
+    .shape-3 {
+      width: 100px; height: 60px;
+      background: var(--accent-3);
+      top: 30%; right: 15%;
+      transform: rotate(15deg);
+      animation: float3 7s ease-in-out infinite;
+    }
+    .shape-4 {
+      width: 70px; height: 70px;
+      background: var(--accent-4);
+      bottom: 15%; left: 12%;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      animation: float4 9s ease-in-out infinite;
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(30px, -40px) rotate(12deg); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-25px, 20px) scale(1.1); }
+    }
+    @keyframes float3 {
+      0%, 100% { transform: rotate(15deg) translateY(0); }
+      50% { transform: rotate(-10deg) translateY(-30px); }
+    }
+    @keyframes float4 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(20px, -25px) rotate(180deg); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: slideDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top brand bar */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      animation: slideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      border: 3px solid #000;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: #000;
+      border-radius: 10px;
+      transform: rotate(-4deg);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+    .logo:hover {
+      transform: rotate(4deg) scale(1.08);
+    }
+    .logo svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand-text {
+      text-align: left;
+    }
+    .brand-name {
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .brand-name span {
+      color: var(--accent-2);
+    }
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .logo-badge {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 8px 14px;
+      border: 3px solid #000;
+      box-shadow: var(--shadow-sm);
+      transform: rotate(-3deg);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .logo-badge:hover {
+      transform: rotate(3deg) scale(1.05);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    h1 span {
+      background: var(--accent-2);
+      color: #000;
+      padding: 2px 10px;
+      border: 3px solid #000;
+      box-shadow: var(--shadow-sm);
+      display: inline-block;
+      transform: rotate(2deg);
+    }
+
+    .tagline {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .brand {
+      display: inline-block;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: var(--accent-3);
+      color: #000;
+      padding: 4px 10px;
+      border: 2px solid #000;
+      font-weight: 600;
+    }
+
+    /* Search Card */
+    .search-card {
+      background: var(--card);
+      border: 4px solid #000;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin-bottom: 32px;
+      animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .search-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .search-label .dot {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border: 2px solid #000;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-wrap {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 16px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      background: var(--bg);
+      border: 3px solid #000;
+      border-radius: 8px;
+      color: var(--text);
+      outline: none;
+      transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    }
+    input[type="url"]:focus {
+      box-shadow: 4px 4px 0 var(--accent);
+      border-color: var(--accent);
+      transform: translate(-1px, -1px);
+    }
+    input[type="url"]::placeholder {
+      color: #666;
+    }
+
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 16px 28px;
+      border: 3px solid #000;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: none !important;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 #000;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--accent-2);
+      color: #000;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-secondary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 #000;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: #444;
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      background: #2a2a2a;
+      border-color: #000;
+    }
+
+    .hint {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Loading */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 48px 20px;
+      animation: fadeIn 0.4s ease;
+    }
+    .loading.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .loader {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border: 4px solid #000;
+      background: var(--accent);
+      box-shadow: var(--shadow-sm);
+      animation: loaderBounce 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes loaderBounce {
+      from { transform: translateY(0) rotate(0deg); border-radius: 8px; }
+      to { transform: translateY(-16px) rotate(8deg); border-radius: 20px; }
+    }
+
+    .loading-text {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .loading-sub {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Error */
+    .error-box {
+      display: none;
+      background: #2a1010;
+      border: 4px solid var(--accent);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 28px;
+      animation: shakeIn 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+    .error-box.active { display: block; }
+
+    @keyframes shakeIn {
+      0% { opacity: 0; transform: translateX(-20px); }
+      40% { transform: translateX(10px); }
+      70% { transform: translateX(-6px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    .error-box h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Results */
+    .results {
+      display: none;
+    }
+    .results.active {
+      display: block;
+      animation: resultsIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes resultsIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Video Card */
+    .video-card {
+      background: var(--card);
+      border: 4px solid #000;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      animation: cardSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+    }
+    @keyframes cardSlide {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .video-media {
+      position: relative;
+      background: #000;
+      aspect-ratio: 9/16;
+      max-height: 420px;
+      overflow: hidden;
+    }
+    .video-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #111;
+    }
+    .video-media img.thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      z-index: 2;
+    }
+
+    .video-info {
+      padding: 20px;
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      object-fit: cover;
+      background: #333;
+    }
+    .user-meta .name {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .user-meta .username {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .caption {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .stat {
+      background: var(--bg);
+      border: 2px solid #000;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat.views { border-color: var(--accent-4); }
+    .stat.likes { border-color: var(--accent); }
+    .stat.comments { border-color: var(--accent-2); }
+    .stat.shares { border-color: var(--accent-3); }
+
+    /* Presets Section */
+    .presets-section {
+      animation: cardSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .badge {
+      background: var(--accent-2);
+      color: #000;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border: 2px solid #000;
+      font-weight: 700;
+    }
+
+    .preset-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .preset-card {
+      background: var(--surface);
+      border: 3px solid #000;
+      box-shadow: var(--shadow-sm);
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+      animation: presetPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .preset-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 6px 6px 0 #000;
+    }
+
+    @keyframes presetPop {
+      from { opacity: 0; transform: scale(0.9) translateY(15px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .preset-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .preset-icon {
+      width: 48px; height: 48px;
+      background: var(--accent-3);
+      border: 3px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .preset-label {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .preset-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .preset-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Meta info */
+    .meta-box {
+      margin-top: 24px;
+      background: var(--bg);
+      border: 3px dashed #444;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      animation: fadeIn 0.5s ease 0.4s both;
+    }
+    .meta-box strong { color: var(--text); }
+
+    /* Footer */
+    footer {
+      margin-top: 56px;
+      animation: fadeIn 0.6s ease 0.5s both;
+    }
+
+    .footer-card {
+      background: var(--card);
+      border: 4px solid #000;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .footer-logo .logo-sm {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-2);
+      border: 3px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transform: rotate(-3deg);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .footer-logo .logo-sm:hover {
+      transform: rotate(3deg) scale(1.1);
+    }
+    .footer-logo .logo-sm svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .footer-brand {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .footer-brand span {
+      color: var(--accent);
+    }
+
+    .footer-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 420px;
+      margin: 0 auto 18px;
+      line-height: 1.5;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .footer-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #000;
+      background: var(--accent-3);
+      padding: 6px 12px;
+      border: 2px solid #000;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 2px 2px 0 #000;
+    }
+    .footer-links a:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 #000;
+    }
+    .footer-links a.green { background: var(--accent-2); }
+    .footer-links a.blue { background: var(--accent-4); }
+    .footer-links a.orange { background: var(--accent); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 2px dashed #333;
+      padding-top: 14px;
+      margin-top: 4px;
+    }
+    .footer-copy a {
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-copy a:hover { text-decoration: underline; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent-2);
+      color: #000;
+      font-weight: 700;
+      padding: 14px 24px;
+      border: 3px solid #000;
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      z-index: 100;
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .input-row { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+      .video-media { max-height: 360px; }
+      .preset-card { flex-direction: column; align-items: flex-start; }
+      .preset-actions { width: 100%; }
+      .preset-actions .btn { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="shape shape-1"></div>
+  <div class="shape shape-2"></div>
+  <div class="shape shape-3"></div>
+  <div class="shape shape-4"></div>
+
+  <div class="container">
+    <!-- Brand Bar -->
+    <div class="brand-bar">
+      <div class="logo" title="Jiyyad Tools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">Jiyyad <span>Tools</span></div>
+        <div class="brand-tag">creative toolkit</div>
+      </div>
+    </div>
+
+    <header>
+      <div class="logo-wrap">
+        <div class="logo-badge">AM</div>
+        <h1>Preset <span>Finder</span></h1>
+      </div>
+      <p class="tagline">Temukan preset Alight Motion dari link TikTok dengan cepat</p>
+    </header>
+
+    <div class="search-card">
+      <div class="search-label">
+        <span class="dot"></span>
+        Tempel link TikTok di sini
+      </div>
+      <div class="input-row">
+        <div class="input-wrap">
+          <input
+            type="url"
+            id="tiktokUrl"
+            placeholder="https://vt.tiktok.com/xxxxx/ atau https://www.tiktok.com/@user/video/..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <button class="btn btn-primary" id="searchBtn" onclick="findPreset()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Cari Preset
+        </button>
+      </div>
+      <p class="hint">Contoh: https://vt.tiktok.com/ZSbm87nak/</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="loader"></div>
+      <div class="loading-text">Sedang memindai komentar...</div>
+      <div class="loading-sub">Mencari link preset Alight Motion</div>
+    </div>
+
+    <div class="error-box" id="errorBox">
+      <h3>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Gagal menemukan preset
+      </h3>
+      <p id="errorMsg">Terjadi kesalahan. Coba lagi nanti.</p>
+    </div>
+
+    <div class="results" id="results">
+      <!-- Video Card -->
+      <div class="video-card">
+        <div class="video-media" id="videoMedia">
+          <div class="video-badge">VIDEO</div>
+        </div>
+        <div class="video-info">
+          <div class="user-row">
+            <img class="avatar" id="userAvatar" src="" alt="avatar" />
+            <div class="user-meta">
+              <div class="name" id="displayName">—</div>
+              <div class="username" id="username">@—</div>
+            </div>
+          </div>
+          <div class="caption" id="caption"></div>
+          <div class="stats" id="stats"></div>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-section">
+        <div class="section-title">
+          Preset Ditemukan
+          <span class="badge" id="presetCount">0</span>
+        </div>
+        <div class="preset-grid" id="presetGrid"></div>
+      </div>
+
+      <div class="meta-box" id="metaBox"></div>
+    </div>
+
+    <footer>
+      <div class="footer-card">
+        <div class="footer-logo">
+          <div class="logo-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="footer-brand">Jiyyad <span>Tools</span></div>
+        </div>
+        <p class="footer-desc">
+          Toolkit kreatif untuk kreator. Cari preset Alight Motion, tools editing, dan utilitas lain dalam satu tempat.
+        </p>
+        <div class="footer-links">
+          <a href="https://api.zyvor.my.id" target="_blank" rel="noopener" class="green">Zyvor API</a>
+          <a href="#" class="orange">AM Finder</a>
+          <a href="#" class="blue">More Tools</a>
+        </div>
+        <div class="footer-copy">
+          © 2026 Jiyyad Tools · Powered by <a href="https://api.zyvor.my.id" target="_blank" rel="noopener">Zyvor API</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Link disalin!</div>
+
+  <script>
+    const API = '/api/preset'; // Express proxy (stable, no CORS)
+
+    const $ = (id) => document.getElementById(id);
+
+    function formatNumber(n) {
+      if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+      if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+      return String(n);
+    }
+
+    function showToast(msg = 'Link disalin!') {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('Link preset disalin!');
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Link preset disalin!');
+      }
+    }
+
+    function setLoading(on) {
+      $('loading').classList.toggle('active', on);
+      $('searchBtn').disabled = on;
+      if (on) {
+        $('errorBox').classList.remove('active');
+        $('results').classList.remove('active');
+      }
+    }
+
+    function showError(msg) {
+      $('errorMsg').textContent = msg;
+      $('errorBox').classList.add('active');
+      $('results').classList.remove('active');
+    }
+
+    function renderResults(data) {
+      const r = data.result;
+      if (!r) {
+        showError(data.message || 'Tidak ada hasil.');
+        return;
+      }
+
+      // User
+      $('userAvatar').src = r.user?.avatar || '';
+      $('displayName').textContent = r.user?.display_name || 'Unknown';
+      $('username').textContent = '@' + (r.user?.username || '—');
+
+      // Caption
+      $('caption').textContent = r.video?.caption || '(tanpa caption)';
+
+      // Stats
+      const v = r.video || {};
+      $('stats').innerHTML = `
+        <div class="stat views">👁 ${formatNumber(v.views || 0)}</div>
+        <div class="stat likes">❤️ ${formatNumber(v.likes || 0)}</div>
+        <div class="stat comments">💬 ${formatNumber(v.comments || 0)}</div>
+        <div class="stat shares">↗ ${formatNumber(v.shares || 0)}</div>
+      `;
+
+      // Video / Thumbnail
+      const media = $('videoMedia');
+      media.innerHTML = '<div class="video-badge">VIDEO</div>';
+      if (v.play_url) {
+        const vid = document.createElement('video');
+        vid.src = v.play_url;
+        vid.controls = true;
+        vid.playsInline = true;
+        vid.preload = 'metadata';
+        vid.poster = r.thumbnail || '';
+        media.appendChild(vid);
+      } else if (r.thumbnail) {
+        const img = document.createElement('img');
+        img.className = 'thumb';
+        img.src = r.thumbnail;
+        img.alt = 'thumbnail';
+        media.appendChild(img);
+      }
+
+      // Presets
+      const presets = r.presets || r.preset_info?.items || [];
+      $('presetCount').textContent = presets.length;
+      const grid = $('presetGrid');
+      grid.innerHTML = '';
+
+      if (presets.length === 0) {
+        grid.innerHTML = '<p style="color:var(--muted)">Tidak ada preset yang ditemukan di komentar.</p>';
+      } else {
+        presets.forEach((p, i) => {
+          const card = document.createElement('div');
+          card.className = 'preset-card';
+          card.style.animationDelay = `${0.08 * i}s`;
+          card.innerHTML = `
+            <div class="preset-info">
+              <div class="preset-icon">📦</div>
+              <div>
+                <div class="preset-label">${p.label || 'Preset'}</div>
+                <div class="preset-sub">Alight Motion Share Link</div>
+              </div>
+            </div>
+            <div class="preset-actions">
+              <button class="btn btn-secondary" onclick="copyText('${p.url}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Salin
+              </button>
+              <a class="btn btn-primary" href="${p.url}" target="_blank" rel="noopener" style="text-decoration:none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Buka
+              </a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // Meta
+      const foundIn = r.found_in || '—';
+      const scanned = r.total_comments_scanned ?? '—';
+      const source = r.source || '—';
+      $('metaBox').innerHTML = `
+        Ditemukan di: <strong>${foundIn}</strong> · 
+        Komentar dipindai: <strong>${scanned}</strong> · 
+        Sumber: <strong>${source}</strong>
+        ${r.video?.url ? ` · <a href="${r.video.url}" target="_blank" rel="noopener" style="color:var(--accent-4)">Buka di TikTok</a>` : ''}
+      `;
+
+      $('results').classList.add('active');
+    }
+
+    async function findPreset() {
+      const url = $('tiktokUrl').value.trim();
+      if (!url) {
+        showError('Masukkan link TikTok terlebih dahulu.');
+        return;
+      }
+      if (!url.includes('tiktok.com') && !url.includes('vt.tiktok')) {
+        showError('Link tidak valid. Pastikan itu link TikTok.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.status === false || data.found === false) {
+          showError(data.message || 'Preset tidak ditemukan di video ini.');
+          return;
+        }
+
+        renderResults(data);
+      } catch (err) {
+        console.error(err);
+        showError('Gagal terhubung ke API. Periksa koneksi atau coba lagi.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Enter key
+    $('tiktokUrl').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') findPreset();
+    });
+
+    // Demo: prefill example
+    // $('tiktokUrl').value = 'https://vt.tiktok.com/ZSbm87nak/';
+  </script>
+</body>
+</html>
